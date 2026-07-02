@@ -9,7 +9,21 @@ const app = express();
 
 connectDB(process.env.MONGO_URI);
 
-app.use(cors());
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000')
+  .split(',')
+  .map(origin => origin.trim());
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (e.g. curl, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
