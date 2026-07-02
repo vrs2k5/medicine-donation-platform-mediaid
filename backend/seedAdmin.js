@@ -12,7 +12,16 @@ const createAdmin = async () => {
   }
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
-  const admin = new User({ name: 'Admin', email: process.env.ADMIN_EMAIL, passwordHash: hash, role: 'admin' });
+  const securityAnswerSalt = await bcrypt.genSalt(10);
+  const securityAnswerHash = await bcrypt.hash('admin-default-answer', securityAnswerSalt);
+  const admin = new User({
+    name: 'Admin',
+    email: process.env.ADMIN_EMAIL,
+    passwordHash: hash,
+    role: 'admin',
+    securityQuestion: 'What is the default admin recovery phrase?',
+    securityAnswerHash
+  });
   await admin.save();
   console.log('Admin created:', process.env.ADMIN_EMAIL);
   process.exit(0);
