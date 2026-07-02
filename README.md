@@ -1,53 +1,65 @@
 # Medicine Donation - Full MERN Project
 
-This project is a full-stack medicine donation system built with the MERN stack (MongoDB, Express.js, React, Node.js).
+A full-stack medicine donation system built with the MERN stack (MongoDB, Express.js, React, Node.js). The platform connects individuals who want to donate unused medicines with NGOs who distribute them to people in need.
+
+## Live Demo
+
+- **Frontend:** https://medicine-donation-frontend.netlify.app
+- **Backend API:** https://medicine-donation-backend-6bv1.onrender.com
+
+> Note: the backend runs on a free-tier server and may take up to 50 seconds to respond on the first request after a period of inactivity.
 
 ## Features
 
-The application facilitates the donation process, allowing users to contribute their unused medicines to an NGO.
+The application facilitates the donation process, allowing users to contribute their unused medicines to an NGO. The system involves three roles: **Admin**, **NGO**, and **Member**.
 
-The system involves three entities: Admin, NGO, and Member.
+- **Admin** manages members, handles improper or expired medicine donations (including blocking/deleting users), approves NGO appointment requests, and maintains a monthly report of donated medicines.
+- **NGOs** register and log in to request appointments (approved and scheduled by the admin), manage their medicine stock, and can change their password.
+- **Members** register and log in to donate medicines, raise donation requests (approved and scheduled by admin), and review their past donation transactions.
 
-The Admin, upon login, manages members by handling improper or expired medicine donations, including the ability to delete or block users.
+Admin access is not available through public registration — it is provisioned separately by the project maintainer. See "Local Setup" below.
 
-Admin also approves appointment requests made by NGOs and maintains a monthly report of donated medicines.
+## Tech Stack
 
-NGOs can register and log in using credentials, enabling them to request appointments that are approved and scheduled by the admin.
-
-NGOs manage their medicine stock, ensuring a record of available medicines, and can enhance security by changing their password.
-
-Members can register and log in using their credentials, donating medicines by providing details and raising a request, which is then approved and scheduled by the admin.
-
-Members can also review their past transactions, checking the details of previously donated medicines.
+- **Frontend:** React, React Router, Bootstrap, Axios
+- **Backend:** Node.js, Express, MongoDB (Mongoose), JWT authentication, bcrypt
+- **Hosting:** Netlify (frontend), Render (backend), MongoDB Atlas (database)
 
 ## Structure
 
 - `backend/` - Node.js + Express API with JWT authentication and role-based access
 - `frontend/` - React app with Bootstrap styling and routing
 
-## Quick start
+## Local Setup
 
 ### 1) Backend
-Install dependencies and configure environment:
+
 ```bash
 cd backend
 npm install
-# Create .env file with the following variables:
-# MONGO_URI=mongodb://localhost:27017/medicine-donation
-# JWT_SECRET=your-secret-key
-# PORT=5000
-# ADMIN_EMAIL=admin@example.com
-# ADMIN_PASSWORD=admin123
-npm run seed   # creates default admin user
+```
+
+Create a `backend/.env` file (not committed to the repo) with your own values:                                     MONGO_URI=your-mongodb-connection-string
+JWT_SECRET=your-own-secret-key
+PORT=5000
+ADMIN_EMAIL=your-admin-email
+ADMIN_PASSWORD=your-admin-password
+Then run:
+```bash
+npm run seed   # creates the admin user defined in your .env
 npm run dev
 ```
 
 ### 2) Frontend
-Install and run the React app:
+
 ```bash
 cd frontend
 npm install
-# Optional: create .env with REACT_APP_API_URL=http://localhost:5000/api
+```
+
+Create a `frontend/.env` file: REACT_APP_API_URL=http://localhost:5000/api
+Then run:
+```bash
 npm start
 ```
 
@@ -55,24 +67,20 @@ Open `http://localhost:3000` in your browser.
 
 ## API Endpoints
 
-- `POST /api/auth/register` - User registration
+- `POST /api/auth/register` - User registration (member/NGO)
 - `POST /api/auth/login` - User login
 - `POST /api/medicines/donate` - Create medicine donation (member)
 - `GET /api/medicines/member` - Get member's donations
 - `GET /api/medicines/ngo/stock` - Get NGO's assigned stock
 - `POST /api/medicines/assign` - Assign donation to NGO (admin)
 
+## Security Notes
+
+- Admin credentials are never published in this repository. Admin accounts are created locally via the `npm run seed` script using values from a private `.env` file.
+- All secrets (database URI, JWT secret, admin credentials) are managed through environment variables and excluded from version control via `.gitignore`.
+- The production backend restricts cross-origin requests to the deployed frontend domain only.
+
 ## Notes
-- Default admin credentials after seeding: email `admin@example.com`, password `admin123`
-- This project is designed to be readable and easily extendable
 
-## Feedback Feature Added
-
-- A new Feedback component has been added to the Home page footer.
-- Users can provide feedback via a modal form including:
-  - Overall satisfaction rating (1-5 stars)
-  - What they liked about the platform
-  - Suggestions for improvement
-  - Additional comments
-- Feedback submission currently logs data to the console and shows a thank you alert.
-- This feature enhances user engagement and helps gather valuable insights for platform improvement.
+- This project is designed to be readable and easily extendable.
+- A Feedback component is available on the Home page footer, allowing users to submit satisfaction ratings and comments.
