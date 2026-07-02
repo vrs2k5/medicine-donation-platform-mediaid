@@ -1,0 +1,16 @@
+{
+  "name": "medicine-donation-full",
+  "version": "1.0.0",
+  "description": "This project is a full-stack medicine donation system built with the MERN stack (MongoDB, Express.js, React, Node.js).",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
