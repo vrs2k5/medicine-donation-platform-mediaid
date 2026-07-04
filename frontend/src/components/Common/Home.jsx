@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="hero-section py-5 text-center text-white" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', minHeight: '60vh', display: 'flex', alignItems: 'center' }}>
+      <section className="hero-section py-5 text-center text-white" style={{ background: 'linear-gradient(135deg, #0f6e63 0%, #2f6fed 100%)', minHeight: '60vh', display: 'flex', alignItems: 'center' }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6">
@@ -46,7 +46,7 @@ export default function Home() {
               <div className="card h-100 border-0 shadow-sm">
                 <div className="card-body text-center">
                   <div className="feature-icon mb-3">
-                    <i className="fas fa-hand-holding-heart fa-3x text-primary"></i>
+                    <i className="fas fa-hand-holding-heart fa-3x" style={{ color: '#128a7d' }}></i>
                   </div>
                   <h5 className="card-title">Donate Medicines</h5>
                   <p className="card-text">Members can easily donate their unused medicines through our secure platform.</p>
@@ -57,7 +57,7 @@ export default function Home() {
               <div className="card h-100 border-0 shadow-sm">
                 <div className="card-body text-center">
                   <div className="feature-icon mb-3">
-                    <i className="fas fa-building fa-3x text-success"></i>
+                    <i className="fas fa-building fa-3x" style={{ color: '#2f6fed' }}></i>
                   </div>
                   <h5 className="card-title">NGO Management</h5>
                   <p className="card-text">NGOs can manage their stock, request appointments, and distribute medicines efficiently.</p>
@@ -68,7 +68,7 @@ export default function Home() {
               <div className="card h-100 border-0 shadow-sm">
                 <div className="card-body text-center">
                   <div className="feature-icon mb-3">
-                    <i className="fas fa-chart-line fa-3x text-info"></i>
+                    <i className="fas fa-chart-line fa-3x" style={{ color: '#0a3a34' }}></i>
                   </div>
                   <h5 className="card-title">Track Impact</h5>
                   <p className="card-text">Admins and users can monitor donation activities and generate reports for better insights.</p>
@@ -80,7 +80,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="stats-section py-5 text-white" style={{ background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)' }}>
+      <section className="stats-section py-5 text-white" style={{ background: 'linear-gradient(135deg, #2f6fed 0%, #0f6e63 100%)' }}>
         <div className="container">
           <div className="row text-center">
             <div className="col-md-3">

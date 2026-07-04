@@ -13,9 +13,9 @@ export default function Navbar(){
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark">
+    <nav className="navbar navbar-expand-lg navbar-light">
       <div className="container">
-        <Link className="navbar-brand" to="/">Medicine Donation</Link>
+        <Link className="navbar-brand" to="/"><i className="fas fa-hand-holding-medical me-2"></i>MediAid</Link>
         <button className="navbar-toggler" type="button" onClick={() => setExpanded(!expanded)} aria-controls="navbarNav" aria-expanded={expanded} aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -50,8 +50,8 @@ export default function Navbar(){
               <li className="nav-item"><Link className="nav-link" to="/register" onClick={() => setExpanded(false)}>Register</Link></li>
             </>}
             {user && <>
-              <li className="nav-item"><span className="nav-link">Hi, {user.name}</span></li>
-              <li className="nav-item"><button className="btn btn-sm btn-outline-light" onClick={() => { handleLogout(); setExpanded(false); }}>Logout</button></li>
+              <li className="nav-item"><span className="nav-link text-muted">Hi, {user.name}</span></li>
+              <li className="nav-item"><button className="btn btn-sm btn-outline-primary" onClick={() => { handleLogout(); setExpanded(false); }}>Logout</button></li>
             </>}
           </ul>
         </div>

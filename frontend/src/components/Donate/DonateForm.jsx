@@ -15,6 +15,8 @@ export default function DonateForm() {
   const [pickupDate, setPickupDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   const [msg, setMsg] = useState('');
+  const [isError, setIsError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef(null);
@@ -74,10 +76,13 @@ export default function DonateForm() {
   // === Form submit ===
   const submit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setMsg('');
     try {
       const payload = { name, manufacturer, expiryDate: expiry, quantity, address, pickupDate, pickupTime };
       await API.post('/medicines/donate', payload);
-      setMsg('Donation submitted');
+      setMsg('Donation submitted successfully!');
+      setIsError(false);
       setName('');
       setManufacturer('');
       setExpiry('');
@@ -87,14 +92,17 @@ export default function DonateForm() {
       setPickupTime('');
     } catch (err) {
       setMsg(err.response?.data?.message || err.message);
+      setIsError(true);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid py-2">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <div className="card shadow">
+          <div className="card">
             <div className="card-header bg-primary text-white">
               <h4 className="mb-0">
                 <i className="fas fa-pills me-2"></i>Donate Medicine
@@ -102,9 +110,9 @@ export default function DonateForm() {
             </div>
             <div className="card-body">
               {msg && (
-                <div className="alert alert-info">
-                  <i className="fas fa-info-circle me-2"></i>
-                  {msg}
+                <div className={`alert ${isError ? 'alert-danger' : 'alert-success'} d-flex align-items-center gap-2`}>
+                  <i className={`fas ${isError ? 'fa-triangle-exclamation' : 'fa-circle-check'}`}></i>
+                  <span>{msg}</span>
                 </div>
               )}
               <form onSubmit={submit} autoComplete="off">
@@ -239,8 +247,12 @@ export default function DonateForm() {
                   </div>
                 </div>
                 <div className="mb-3 d-flex flex-wrap gap-2">
-                  <button className="btn btn-success" type="submit">
-                    <i className="fas fa-paper-plane me-1"></i>Submit Donation
+                  <button className="btn btn-success" type="submit" disabled={submitting}>
+                    {submitting ? (
+                      <><span className="spinner-border spinner-border-sm me-1"></span>Submitting...</>
+                    ) : (
+                      <><i className="fas fa-paper-plane me-1"></i>Submit Donation</>
+                    )}
                   </button>
                 </div>
               </form>

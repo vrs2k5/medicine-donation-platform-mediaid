@@ -273,15 +273,18 @@ export default function Register(){
   const [name,setName]=useState('');
   const [email,setEmail]=useState('');
   const [password,setPassword]=useState('');
+  const [showPassword,setShowPassword]=useState(false);
   const [role,setRole]=useState('member');
   const [mobile,setMobile]=useState('+91');
-  const [location,setLocation]=useState('India');
+  const [location,setLocation]=useState('');
   const [err,setErr]=useState('');
   const [phoneErr, setPhoneErr] = useState('');
   const [area, setArea] = useState('');
   const [areas, setAreas] = useState([]);
   const [securityQuestion, setSecurityQuestion] = useState('');
   const [securityAnswer, setSecurityAnswer] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
   const navigate=useNavigate();
 
   useEffect(() => {
@@ -295,117 +298,194 @@ export default function Register(){
 
   const submit=async(e)=>{
     e.preventDefault();
+    setErr('');
+
     if (!isValidPhoneNumber(mobile)) {
       setPhoneErr('Please enter a valid phone number with country code');
       return;
     }
     setPhoneErr('');
+
+    if (!location) {
+      setErr('Please select your city.');
+      return;
+    }
+    if (!area) {
+      setErr('Please select your area.');
+      return;
+    }
+
+    setSubmitting(true);
     try {
-      const res = await API.post('/auth/register', { name, email, password, role, mobile, location, area, securityQuestion, securityAnswer });
-      navigate('/login');
-    } catch (err) { setErr(err.response?.data?.message || 'Registration failed'); }
+      await API.post('/auth/register', { name, email, password, role, mobile, location, area, securityQuestion, securityAnswer });
+      setSuccess(true);
+      setTimeout(() => navigate('/login'), 1200);
+    } catch (err) {
+      setErr(err.response?.data?.message || 'Registration failed. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="row justify-content-center align-items-center min-vh-100">
-      <div className="col-md-6 col-lg-4">
-        <div className="card shadow-lg">
-          <div className="card-header text-center bg-primary text-white">
-            <h4 className="mb-0"><i className="fas fa-user-plus me-2"></i>Register</h4>
+    <div className="auth-page d-flex justify-content-center align-items-center py-5">
+      <div className="w-100" style={{ maxWidth: '520px' }}>
+        <div className="card auth-card border-0 shadow-lg rounded-4 overflow-hidden">
+          <div className="auth-card-header text-center text-white py-4">
+            <div className="d-inline-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-25 mb-2" style={{ width: 56, height: 56 }}>
+              <i className="fas fa-user-plus fs-4"></i>
+            </div>
+            <h4 className="mb-0 fw-semibold">Create Your Account</h4>
+            <p className="mb-0 small opacity-75">Join us to donate or receive medicines</p>
           </div>
-          <div className="card-body">
-            {err && <div className="alert alert-danger">{err}</div>}
-            <form onSubmit={submit}>
-              <div className="mb-3">
-                <label className="form-label">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={name}
-                  onChange={e=>setName(e.target.value)}
-                  required
-                  placeholder="Enter your full name"
-                />
+
+          <div className="card-body p-4 p-md-5">
+            {success && (
+              <div className="alert alert-success d-flex align-items-center gap-2" role="alert">
+                <i className="fas fa-circle-check"></i>
+                <span>Account created! Redirecting you to login...</span>
               </div>
+            )}
+            {err && (
+              <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                <i className="fas fa-triangle-exclamation"></i>
+                <span>{err}</span>
+              </div>
+            )}
+
+            <form onSubmit={submit} noValidate>
+              <p className="section-label mb-3 mt-1">Account Details</p>
+
+              <div className="mb-3">
+                <label className="form-label">Full Name</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light"><i className="fas fa-user text-muted"></i></span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={name}
+                    onChange={e=>setName(e.target.value)}
+                    required
+                    placeholder="Enter your full name"
+                  />
+                </div>
+              </div>
+
               <div className="mb-3">
                 <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  value={email}
-                  onChange={e=>setEmail(e.target.value)}
-                  required
-                  placeholder="Enter your email"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light"><i className="fas fa-envelope text-muted"></i></span>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={e=>setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                  />
+                </div>
               </div>
+
               <div className="mb-3">
                 <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={password}
-                  onChange={e=>setPassword(e.target.value)}
-                  required
-                  placeholder="Enter a password"
-                  minLength="6"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light"><i className="fas fa-lock text-muted"></i></span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-control"
+                    value={password}
+                    onChange={e=>setPassword(e.target.value)}
+                    required
+                    placeholder="At least 6 characters"
+                    minLength="6"
+                  />
+                  <button
+                    type="button"
+                    className="input-group-text bg-light"
+                    onClick={() => setShowPassword(s => !s)}
+                    tabIndex={-1}
+                  >
+                    <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-muted`}></i>
+                  </button>
+                </div>
               </div>
+
               <div className="mb-3">
-                <label className="form-label">Role</label>
-                <select
-                  className="form-select"
-                  value={role}
-                  onChange={e=>setRole(e.target.value)}
-                  required
-                >
-                  <option value="member">Member</option>
-                  <option value="ngo">NGO</option>
-                </select>
+                <label className="form-label">Mobile Number</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light"><i className="fas fa-phone text-muted"></i></span>
+                  <input
+                    type="tel"
+                    className={`form-control ${phoneErr ? 'is-invalid' : ''}`}
+                    value={mobile}
+                    onChange={e=>setMobile(e.target.value)}
+                    required
+                    placeholder="+919876543210"
+                  />
+                </div>
+                {phoneErr && <div className="text-danger small mt-1">{phoneErr}</div>}
               </div>
+
               <div className="mb-3">
-                <label className="form-label">Mobile</label>
-                <input
-                  type="tel"
-                  className={`form-control ${phoneErr ? 'is-invalid' : ''}`}
-                  value={mobile}
-                  onChange={e=>setMobile(e.target.value)}
-                  required
-                  placeholder="+919876543210"
-                />
-                {phoneErr && <div className="invalid-feedback">{phoneErr}</div>}
+                <label className="form-label">I am registering as</label>
+                <div className="d-flex gap-2">
+                  <button
+                    type="button"
+                    className={`btn flex-fill role-toggle-btn ${role === 'member' ? 'active' : ''}`}
+                    onClick={() => setRole('member')}
+                  >
+                    <i className="fas fa-hand-holding-heart me-2"></i>Member
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn flex-fill role-toggle-btn ${role === 'ngo' ? 'active' : ''}`}
+                    onClick={() => setRole('ngo')}
+                  >
+                    <i className="fas fa-hospital me-2"></i>NGO
+                  </button>
+                </div>
               </div>
-              <div className="mb-3">
-                <label className="form-label">Location</label>
-                <select
-                  className="form-select"
-                  value={location}
-                  onChange={e => {
-                    const city = e.target.value;
-                    setLocation(city);
-                  }}
-                  required
-                >
-                  <option value="India">India</option>
-                  {Object.keys(cityAreas).map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
+
+              <p className="section-label mb-3 mt-4">Location</p>
+
+              <div className="row g-3 mb-3">
+                <div className="col-sm-6">
+                  <label className="form-label">City</label>
+                  <select
+                    className="form-select"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>Select your city</option>
+                    {Object.keys(cityAreas).map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">Area</label>
+                  <select
+                    className="form-select"
+                    value={area}
+                    onChange={e => setArea(e.target.value)}
+                    required
+                    disabled={areas.length === 0}
+                  >
+                    <option value="" disabled>
+                      {areas.length === 0 ? 'Select a city first' : 'Select your area'}
+                    </option>
+                    {areas.map(a => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className="mb-3">
-                <label className="form-label">Area</label>
-                <select
-                  className="form-select"
-                  value={area}
-                  onChange={e => setArea(e.target.value)}
-                  required
-                  disabled={areas.length === 0}
-                >
-                  {areas.length === 0 && <option value="">Select a city first</option>}
-                  {areas.map(a => (
-                    <option key={a} value={a}>{a}</option>
-                  ))}
-                </select>
-              </div>
+
+              <p className="section-label mb-3 mt-4">Account Recovery</p>
+              <p className="text-muted small mb-3" style={{ marginTop: '-0.5rem' }}>
+                Used to verify your identity if you ever forget your password.
+              </p>
+
               <div className="mb-3">
                 <label className="form-label">Security Question</label>
                 <input
@@ -414,10 +494,11 @@ export default function Register(){
                   value={securityQuestion}
                   onChange={e => setSecurityQuestion(e.target.value)}
                   required
-                  placeholder="Enter a security question (e.g., What is your pet's name?)"
+                  placeholder="e.g., What is your pet's name?"
                 />
               </div>
-              <div className="mb-3">
+
+              <div className="mb-4">
                 <label className="form-label">Security Answer</label>
                 <input
                   type="text"
@@ -425,12 +506,26 @@ export default function Register(){
                   value={securityAnswer}
                   onChange={e => setSecurityAnswer(e.target.value)}
                   required
-                  placeholder="Enter the answer to your security question"
+                  placeholder="Your answer"
                 />
               </div>
+
               <div className="d-grid">
-                <button className="btn btn-primary">Register</button>
+                <button className="btn btn-primary btn-lg rounded-3" disabled={submitting || success}>
+                  {submitting ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                      Creating account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </button>
               </div>
+
+              <p className="text-center text-muted small mt-3 mb-0">
+                Already have an account? <a href="/login">Log in</a>
+              </p>
             </form>
           </div>
         </div>
